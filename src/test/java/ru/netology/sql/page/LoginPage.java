@@ -2,6 +2,7 @@ package ru.netology.sql.page;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import org.openqa.selenium.Keys;
 import ru.netology.sql.data.DataHelper;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -18,8 +19,25 @@ public class LoginPage {
         loginButton.click();
         return new VerificationPage();
     }
+
     public void verificationErrorMassage(String expectedText) {
         errorNotification.shouldHave(Condition.exactText(expectedText)).shouldBe(Condition.visible);
+    }
+
+    public void invalidVerification3times() {
+        loginField.setValue(DataHelper.getAuthInfo().getLogin());
+        passwordField.setValue(DataHelper.getWrongPasswordAuthInfo().getPassword());
+        loginButton.click();
+        loginField.doubleClick().sendKeys(Keys.BACK_SPACE);
+        passwordField.doubleClick().sendKeys(Keys.BACK_SPACE);
+        loginField.setValue(DataHelper.getAuthInfo().getLogin());
+        passwordField.setValue(DataHelper.getWrongPasswordAuthInfo().getPassword());
+        loginButton.click();
+        loginField.doubleClick().sendKeys(Keys.BACK_SPACE);
+        passwordField.doubleClick().sendKeys(Keys.BACK_SPACE);
+        loginField.setValue(DataHelper.getAuthInfo().getLogin());
+        passwordField.setValue(DataHelper.getWrongPasswordAuthInfo().getPassword());
+        loginButton.click();
     }
 
 }

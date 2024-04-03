@@ -1,23 +1,15 @@
 package ru.netology.sql.test;
 
-import com.codeborne.selenide.SelenideElement;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.Keys;
 import ru.netology.sql.data.DataHelper;
 import ru.netology.sql.data.SQLHelper;
 import ru.netology.sql.page.LoginPage;
 
-import java.sql.SQLException;
-
-import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
-import static ru.netology.sql.data.SQLHelper.getConn;
+import static ru.netology.sql.data.SQLHelper.getUserStatus;
 
 
 public class BankLoginTests {
-    private static final QueryRunner queryRunner = new QueryRunner();
     LoginPage loginPage;
 
     @AfterEach
@@ -61,24 +53,9 @@ public class BankLoginTests {
         loginPage.verificationErrorMassage("Ошибка! Неверно указан логин или пароль");
     }
     @Test
-    void shouldBlockUserIfThreeOrMoreLoginWithWrongPassword() throws SQLException {
-
-        SelenideElement loginField = $("[data-test-id='login'] input");
-        SelenideElement passwordField = $("[data-test-id='password'] input");
-
-        loginPage.validLogin(DataHelper.getWrongPasswordAuthInfo());
-        loginField.doubleClick().sendKeys(Keys.BACK_SPACE);
-        passwordField.doubleClick().sendKeys(Keys.BACK_SPACE);
-
-        loginPage.validLogin(DataHelper.getWrongPasswordAuthInfo());
-        loginField.doubleClick().sendKeys(Keys.BACK_SPACE);
-        passwordField.doubleClick().sendKeys(Keys.BACK_SPACE);
-
-        loginPage.validLogin(DataHelper.getWrongPasswordAuthInfo());
-
-        var codeSQL = "SELECT status FROM users WHERE login = 'vasya'";
-        var conn = getConn();
-        var status = queryRunner.query(conn, codeSQL, new ScalarHandler<String>());
-        Assertions.assertEquals("blocked", status);
+    void shouldBlockUserIfThreeOrMoreLoginWithWrongPassword() {
+        loginPage.invalidVerification3times();
+        Assertions.assertEquals("blocked", getUserStatus());
     }
+
 }
